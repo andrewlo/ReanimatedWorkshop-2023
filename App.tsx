@@ -18,15 +18,15 @@ function App(): JSX.Element {
   return (
     <GestureHandlerRootView style={styles.container}>
       <NavigationContainer>
-        {/* <SharedTransitionExample /> */}
-        <SafeAreaView style={styles.container}>
+        <SharedTransitionExample />
+        {/* <SafeAreaView style={styles.container}>
           <Text>Advanced Reanimated Workshops for Shopify</Text>
           {/* <LayoutAnimationListExample /> */}
           {/* <AnimatableTextExample /> */}
           {/* <ColorInterpolationExample /> */}
           {/* <CustomAnimationExample /> */}
           {/* <GestureHandlerWithSkiaExample /> */}
-        </SafeAreaView>
+        {/* </SafeAreaView> */} 
       </NavigationContainer>
     </GestureHandlerRootView>
   );

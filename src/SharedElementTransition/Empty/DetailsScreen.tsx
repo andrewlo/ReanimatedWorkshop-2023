@@ -112,6 +112,7 @@ export default function DetailsScreen({
       <GestureDetector gesture={pan}>
         <Animated.View style={[detailStyles.container, animatedStyle]}>
           <Animated.Image
+          sharedTransitionTag={item.id}
             source={item.image}
             style={detailStyles.image}
           />

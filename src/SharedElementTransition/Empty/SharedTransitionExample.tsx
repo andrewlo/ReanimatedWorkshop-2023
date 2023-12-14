@@ -17,10 +17,10 @@ const Stack = createNativeStackNavigator<StackParamList>();
 export default function SharedTransitionExample() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Profiles"
         component={ProfilesScreen}
-      />
+      /> */}
       <Stack.Screen
         name="Home"
         component={HomeScreen}

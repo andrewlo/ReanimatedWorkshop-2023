@@ -110,7 +110,8 @@ export default function HomeScreen({
   route,
   navigation,
 }: NativeStackScreenProps<StackParamList, 'Home'>) {
-  const { tag } = route.params;
+  // const { tag } = route.params;
+  const tag = 'dog'
 
   return (
     <View style={homeStyles.container}>
@@ -141,6 +142,7 @@ export default function HomeScreen({
                 navigation.navigate('Details', { item });
               }}>
               <Animated.Image
+              sharedTransitionTag={item.id}
                 source={item.image}
                 style={homeStyles.image}
               />
@@ -166,7 +168,8 @@ export default function HomeScreen({
               onPress={() => {
                 navigation.navigate('Details', { item });
               }}>
-              <Animated.Image
+              <Animated.Image              sharedTransitionTag={item.id}
+
                 source={item.image}
                 style={homeStyles.image}
               />
