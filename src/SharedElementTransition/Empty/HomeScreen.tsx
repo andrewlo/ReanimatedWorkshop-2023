@@ -8,17 +8,13 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
-import {
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
-import Animated, {
-  withSpring,
-} from 'react-native-reanimated';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import Animated, {withSpring} from 'react-native-reanimated';
 
 type StackParamList = {
   Profiles: undefined;
-  Home: { tag: Tag };
-  Details: { item: any };
+  Home: {tag: Tag};
+  Details: {item: any};
 };
 
 const profiles = {
@@ -50,33 +46,6 @@ const profiles = {
 
 type Tag = keyof typeof profiles;
 
-const lakes = [
-  {
-    image: require('../assets/nature/lake-1.jpg'),
-    title: 'Lake Annabelle',
-    id: 'lake-1',
-  },
-  {
-    image: require('../assets/nature/lake-2.jpg'),
-    title: 'Lake Charlotte',
-    id: 'lake-2',
-  },
-  {
-    image: require('../assets/nature/lake-3.jpg'),
-    title: 'Lake Claire',
-    id: 'lake-3',
-  },
-  {
-    image: require('../assets/nature/lake-4.jpg'),
-    title: 'Lake Josephine',
-    id: 'lake-4',
-  },
-  {
-    image: require('../assets/nature/lake-5.jpg'),
-    title: 'Lake Sophie',
-    id: 'lake-5',
-  },
-] as const;
 
 const forests = [
   {
@@ -106,12 +75,83 @@ const forests = [
   },
 ] as const;
 
+const lakes = [
+  {
+    image: require('../assets/nature/lake-1.jpg'),
+    title: 'Lake Annabelle',
+    id: 'lake-1',
+  },
+  {
+    image: require('../assets/nature/lake-2.jpg'),
+    title: 'Lake Charlotte',
+    id: 'lake-2',
+  },
+  {
+    image: require('../assets/nature/lake-3.jpg'),
+    title: 'Lake Claire',
+    id: 'lake-3',
+  },
+  {
+    image: require('../assets/nature/lake-4.jpg'),
+    title: 'Lake Josephine',
+    id: 'lake-4',
+  },
+  {
+    image: require('../assets/nature/lake-5.jpg'),
+    title: 'Lake Sophie',
+    id: 'lake-5',
+  },
+  ...forests
+] as const;
+
+
+const generateNewList = (data, prefix) =>
+  data.map(item => ({
+    ...item,
+    title: item.title + prefix,
+    id: item.id + prefix,
+  }));
+
 export default function HomeScreen({
   route,
   navigation,
 }: NativeStackScreenProps<StackParamList, 'Home'>) {
   // const { tag } = route.params;
-  const tag = 'dog'
+  const tag = 'dog';
+
+  const lakesList = [...new Array(50)].map((_, index) =>
+    generateNewList(lakes, `${index}`),
+  );
+
+  const renderList = ({item: list}) => {
+    return (
+      <FlatList
+        data={list}
+        style={homeStyles.margin}
+        showsHorizontalScrollIndicator={false}
+        renderItem={({item}) => {
+          return (
+            <Pressable
+              style={homeStyles.marginHorizontal}
+              onPress={() => {
+                navigation.navigate('Details', {item});
+              }}>
+              <Animated.Image
+                sharedTransitionTag={item.id}
+                source={item.image}
+                style={homeStyles.image}
+              />
+              <Animated.Text style={homeStyles.imageLabel}>
+                {item.title}
+              </Animated.Text>
+            </Pressable>
+          );
+        }}
+        keyExtractor={item => item.id}
+        horizontal={true}
+      />
+    );
+  };
 
   return (
     <View style={homeStyles.container}>
@@ -126,50 +166,26 @@ export default function HomeScreen({
             source={profiles[tag as Tag].image}
             style={homeStyles.profile}
           />
-          <Animated.Text/>
+          <Animated.Text />
         </Pressable>
       </View>
-      <Text style={homeStyles.subTitle}>Lakes</Text>
-      <FlatList
-        data={lakes}
-        style={homeStyles.margin}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => {
-          return (
-            <Pressable
-              style={homeStyles.marginHorizontal}
-              onPress={() => {
-                navigation.navigate('Details', { item });
-              }}>
-              <Animated.Image
-              sharedTransitionTag={item.id}
-                source={item.image}
-                style={homeStyles.image}
-              />
-              <Animated.Text style={homeStyles.imageLabel}>
-                {item.title}
-              </Animated.Text>
-            </Pressable>
-          );
-        }}
-        keyExtractor={(item) => item.id}
-        horizontal={true}
-      />
+      {/* <Text style={homeStyles.subTitle}>Lakes</Text> */}
+      <FlatList data={lakesList} renderItem={renderList} />
 
-      <Text style={homeStyles.subTitle}>Forests</Text>
+      {/* <Text style={homeStyles.subTitle}>Forests</Text>
       <FlatList
         data={forests}
         style={homeStyles.margin}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           return (
             <Pressable
               style={homeStyles.marginHorizontal}
               onPress={() => {
-                navigation.navigate('Details', { item });
+                navigation.navigate('Details', {item});
               }}>
-              <Animated.Image              sharedTransitionTag={item.id}
-
+              <Animated.Image
+                sharedTransitionTag={item.id}
                 source={item.image}
                 style={homeStyles.image}
               />
@@ -179,9 +195,9 @@ export default function HomeScreen({
             </Pressable>
           );
         }}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         horizontal={true}
-      />
+      /> */}
     </View>
   );
 }
