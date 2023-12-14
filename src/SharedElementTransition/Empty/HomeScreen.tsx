@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Animated, {withSpring} from 'react-native-reanimated';
+import {FlashList} from '@shopify/flash-list';
 
 type StackParamList = {
   Profiles: undefined;
@@ -198,11 +199,12 @@ export default function HomeScreen({
         </Pressable>
       </View>
       {/* <Text style={homeStyles.subTitle}>Lakes</Text> */}
-      <FlatList
+      <FlashList
         data={listOfLists}
         renderItem={renderHorizontalList}
         onEndReached={fetchMore}
-        keyExtractor={item => item.id}
+        // keyExtractor={item => item.id}
+        estimatedItemSize={220}
       />
 
       {/* <Text style={homeStyles.subTitle}>Forests</Text>
