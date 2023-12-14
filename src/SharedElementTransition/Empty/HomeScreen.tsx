@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -45,7 +45,6 @@ const profiles = {
 } as const;
 
 type Tag = keyof typeof profiles;
-
 
 const forests = [
   {
@@ -101,16 +100,26 @@ const lakes = [
     title: 'Lake Sophie',
     id: 'lake-5',
   },
-  ...forests
+  ...forests,
 ] as const;
-
 
 const generateNewList = (data, prefix) =>
   data.map(item => ({
     ...item,
-    title: item.title + prefix,
-    id: item.id + prefix,
+    title: prefix + item.title,
+    id: prefix + item.id,
   }));
+
+const generateListOfLists = (size: number, indexOffset = 0) => {
+  // console.log('indexOffset', indexOffset);
+  return [...new Array(size)].map((_, index) => ({
+    id: `${index + indexOffset}`,
+    list: generateNewList(lakes, `${index + indexOffset}`),
+  }));
+};
+
+const FIRST = 20;
+const PAGE_SIZE = 10;
 
 export default function HomeScreen({
   route,
@@ -119,39 +128,58 @@ export default function HomeScreen({
   // const { tag } = route.params;
   const tag = 'dog';
 
-  const lakesList = [...new Array(50)].map((_, index) =>
-    generateNewList(lakes, `${index}`),
+  const [listOfLists, setListOfLists] = useState(() =>
+    generateListOfLists(FIRST),
   );
 
-  const renderList = ({item: list}) => {
+  const fetchMore = () => {
+    setListOfLists(prevList => {
+      // console.log('fetch more', prevList.length);
+
+      const newList = generateListOfLists(PAGE_SIZE, prevList.length + 1);
+
+      // console.log(JSON.stringify(newList, null, 2));
+
+      return [...prevList, ...newList];
+    });
+  };
+
+  const renderHorizontalList = ({item, index}) => {
+    // console.log('render', item);
     return (
-      <FlatList
-        data={list}
-        style={homeStyles.margin}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({item}) => {
-          return (
-            <Pressable
-              style={homeStyles.marginHorizontal}
-              onPress={() => {
-                navigation.navigate('Details', {item});
-              }}>
-              <Animated.Image
-                sharedTransitionTag={item.id}
-                source={item.image}
-                style={homeStyles.image}
-              />
-              <Animated.Text style={homeStyles.imageLabel}>
-                {item.title}
-              </Animated.Text>
-            </Pressable>
-          );
-        }}
-        keyExtractor={item => item.id}
-        horizontal={true}
-      />
+      <View>
+        <Text>Section: {item.id}</Text>
+        <FlatList
+          key={index}
+          data={item.list}
+          style={homeStyles.margin}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({item}) => {
+            return (
+              <Pressable
+                style={homeStyles.marginHorizontal}
+                onPress={() => {
+                  navigation.navigate('Details', {item});
+                }}>
+                <Animated.Image
+                  sharedTransitionTag={item.id}
+                  source={item.image}
+                  style={homeStyles.image}
+                />
+                <Animated.Text style={homeStyles.imageLabel}>
+                  {item.title}
+                </Animated.Text>
+              </Pressable>
+            );
+          }}
+          keyExtractor={item => item.id}
+          horizontal={true}
+        />
+      </View>
     );
   };
+
+  // console.log(JSON.stringify(listOfLists, null, 2));
 
   return (
     <View style={homeStyles.container}>
@@ -170,7 +198,12 @@ export default function HomeScreen({
         </Pressable>
       </View>
       {/* <Text style={homeStyles.subTitle}>Lakes</Text> */}
-      <FlatList data={lakesList} renderItem={renderList} />
+      <FlatList
+        data={listOfLists}
+        renderItem={renderHorizontalList}
+        onEndReached={fetchMore}
+        keyExtractor={item => item.id}
+      />
 
       {/* <Text style={homeStyles.subTitle}>Forests</Text>
       <FlatList
